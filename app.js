@@ -61,7 +61,8 @@ app.get('/pp/averagePrice/:query', product.calculateAveragePrice);
 //=============================================================================
 //                      Connect to database
 //=============================================================================
-mongoose.connect('mongodb://localhost/test');
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
+mongoose.connect(mongoUri);
 
 //=============================================================================
 //                      Finally creates the server
