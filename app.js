@@ -50,7 +50,7 @@ if ('development' == app.get('env')) {
 
 //  Expose resources.
 app.get('/', function (req, res) {
-    res.send('Welcome to Quick & Easy server.');
+    res.send('Welcome Super Mercado Libre server.');
 });
 
 app.get('/users', user.findAll);
