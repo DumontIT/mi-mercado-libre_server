@@ -31,8 +31,8 @@ exports.calculateAveragePrice = function (req, res) {
 
             res.send(200, {
                 averagePrice: Math.round(total / data.paging.limit),
-                minimumPrice: minimum,
-                maximumPrice: maximum
+                minimumPrice: Math.round(minimum),
+                maximumPrice: Math.round(maximum)
             });
         }
 
