@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //  Development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 //=============================================================================
@@ -62,8 +62,8 @@ mongoose.connect('mongodb://localhost/test');
 //=============================================================================
 //                      Finally creates the server
 //=============================================================================
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+http.createServer(app).listen(app.get('port'), function () {
+    console.log('Express server listening on port ' + app.get('port'));
 });
 
 /*****************************************************************************/
@@ -94,13 +94,12 @@ User.find(function (err, users) {
 
     if (err) {
         console.log('An error occurred while finding users, populating DB...');
-        populate();
     } else {
         if (users.length > 0) {
             for (var i = 0; i < users.length; i++) {
                 users[i].remove();
             }
         }
-        populate();
     }
+    populate();
 });
