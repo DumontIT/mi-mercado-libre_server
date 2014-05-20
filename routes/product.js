@@ -13,13 +13,27 @@ exports.calculateAveragePrice = function (req, res) {
 
         if (!error) {
             var total = 0;
+            var minimum;
+            var maximum;
 
             for (var i = 0; i < data.results.length; i++) {
                 var eachArticle = data.results[i];
                 total += eachArticle.price;
+
+                if (!minimum || eachArticle.price < minimum) {
+                    minimum = eachArticle.price;
+                }
+
+                if (!maximum || eachArticle.price > maximum) {
+                    maximum = eachArticle.price;
+                }
             }
 
-            res.send(200, {averagePrice: total / data.paging.limit});
+            res.send(200, {
+                averagePrice: total / data.paging.limit,
+                minimum: minimum,
+                maximum: maximum
+            });
         }
 
     });
