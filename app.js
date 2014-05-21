@@ -21,6 +21,7 @@ require('./model/user');
 //  Load own modules
 var user = require('./routes/user');
 var product = require('./routes/product');
+var site = require('./routes/site');
 
 //  Set-Up ExpressJS server.
 var app = express();
@@ -54,6 +55,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/users', user.findAll);
+app.get('/sites', site.findAll);
 
 //======    Resources for Precio Promedio module
 app.get('/pp/averagePrice/:query', product.calculateAveragePrice);
