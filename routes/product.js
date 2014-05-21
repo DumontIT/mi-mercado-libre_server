@@ -17,7 +17,7 @@ exports.calculateAveragePrice = function (req, res) {
 
             var statusCode = 500;
             if (error.code = 'ECONNRESET') {
-                statusCode = 408;
+                statusCode = 504;
             }
 
             res.send(statusCode, {message: error.message});
