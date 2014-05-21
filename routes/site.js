@@ -6,7 +6,7 @@ var meli = require('mercadolibre');
 var meliObject = new meli.Meli(5646442879385929, 'wvJMSiGIhAXLyFTochnHuZ2vssZ4D0wh');
 
 exports.findAll = function (req, res) {
-    meliObject.get('/site', {}, function (error, data) {
+    meliObject.get('/sites', {}, function (error, data) {
 
         //  TODO : Performance : Save this sites and check against ML once a week or something similar.
 
