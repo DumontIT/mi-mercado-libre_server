@@ -51,7 +51,7 @@ app.get('/users', user.findAll);
 app.get('/sites', site.findAll);
 
 //======    Resources for Precio Promedio module
-app.get('/pp/averagePrice/:query', product.calculateAveragePrice);
+app.get('/:siteId/averagePrice/:query', product.calculateAveragePrice);
 
 //=============================================================================
 //                      Connect to database

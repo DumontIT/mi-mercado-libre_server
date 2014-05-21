@@ -6,10 +6,10 @@ var expect = require('expect.js')
     , request = require('request').defaults({json: true})
     , properties = require('../properties');
 
-describe("GET /pp/averagePrice/:query", function () {
+describe("GET /:siteId/averagePrice/:query", function () {
     it("Must return an object with product information when searching valid values", function (done) {
 
-        request.get(properties.uri + '/pp/averagePrice/ipod', function (error, response) {
+        request.get(properties.uri + '/MLB/averagePrice/gol power', function (error, response) {
             expect(error).to.not.be.ok();
             expect(response.statusCode).to.be.equal(200);
             expect(response.body).to.be.an('object');

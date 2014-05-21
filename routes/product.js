@@ -3,14 +3,14 @@
  * Created on 19/05/14, at 23:02.
  */
 var meli = require('mercadolibre')
-    , properties=require('../properties');
+    , properties = require('../properties');
 var meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
 
 
 exports.calculateAveragePrice = function (req, res) {
-    console.log('Calculating average price for query: ' + req.params.query);
+    console.log('Calculating average price in site: ' + req.params.siteId + ' for query: ' + req.params.query);
 
-    meliObject.get('/sites/MLA/search', {q: req.params.query}, function (error, data) {
+    meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
 
         if (!error) {
             var total = 0;
