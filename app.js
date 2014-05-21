@@ -1,12 +1,4 @@
 /**
- * Main configuration.
- * @type {{localPort: number}}
- */
-var configuration = {
-    localPort: 5000
-};
-
-/**
  * Module dependencies.
  */
 var express = require('express');
@@ -19,6 +11,7 @@ var mongoose = require('mongoose');
 require('./model/user');
 
 //  Load own modules
+var properties = require('./properties');
 var user = require('./routes/user');
 var product = require('./routes/product');
 var site = require('./routes/site');
@@ -29,7 +22,7 @@ var app = express();
 //=============================================================================
 //                      Configure server
 //=============================================================================
-app.set('port', process.env.PORT || configuration.localPort);
+app.set('port', process.env.PORT || properties.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());

@@ -2,8 +2,9 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 20/05/14, at 21:27.
  */
-var meli = require('mercadolibre');
-var meliObject = new meli.Meli(5646442879385929, 'wvJMSiGIhAXLyFTochnHuZ2vssZ4D0wh');
+var meli = require('mercadolibre')
+    , properties = require('../properties');
+var meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
 
 exports.findAll = function (req, res) {
     meliObject.get('/sites', {}, function (error, data) {
