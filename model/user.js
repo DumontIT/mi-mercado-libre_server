@@ -2,13 +2,14 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 15/04/14, at 11:19.
  */
-var mongoose = require('mongoose');
-
-var userSchema = mongoose.Schema({
-                                     email: { type: String, validate: /.+@.+\..+/, unique: true },
-                                     name: {type: String, required: true},
-                                     lastName: {type: String, required: true}
-                                 });
+var SCHEMA_NAME = 'User';
+console.log('Creating schema: ' + SCHEMA_NAME);
+var mongoose = require('mongoose')
+    , userSchema = mongoose.Schema({
+                                       email: {type: String, validate: /.+@.+\..+/, unique: true},
+                                       name: {type: String, required: true},
+                                       lastName: {type: String, required: true}
+                                   });
 
 /************************************************************************************/
 /*  --- Behavior ---                                                                */
@@ -24,4 +25,5 @@ userSchema.methods.sayHello = function () {
 };
 
 //  Finally compiles this schema definition.
-mongoose.model('User', userSchema);
+mongoose.model(SCHEMA_NAME, userSchema);
+console.log('Schema compiled: ' + SCHEMA_NAME);
