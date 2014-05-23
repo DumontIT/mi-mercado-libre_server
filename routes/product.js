@@ -2,9 +2,9 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 19/05/14, at 23:02.
  */
-var meli = require('mercadolibre')
-    , properties = require('../properties');
-var meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
+var properties = require('../properties')
+    , meli = require('mercadolibre')
+    , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
 
 
 exports.calculateAveragePrice = function (req, res) {

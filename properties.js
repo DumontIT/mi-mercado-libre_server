@@ -11,3 +11,7 @@ var ml = {
 exports.ml = ml;
 exports.port = port;
 exports.uri = 'http://localhost:' + port;
+exports.db = {
+    host: 'localhost',
+    schema: 'test'
+};

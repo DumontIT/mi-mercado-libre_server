@@ -8,7 +8,6 @@ var path = require('path');
 
 //  Load Mongoose and each schema definition
 var mongoose = require('mongoose');
-require('./model/user');
 
 //  Load own modules
 var properties = require('./properties');
@@ -56,7 +55,7 @@ app.get('/:siteId/averagePrice/:query', product.calculateAveragePrice);
 //=============================================================================
 //                      Connect to database
 //=============================================================================
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/test';
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://' + properties.db.host + '/' + properties.db.schema;
 mongoose.connect(mongoUri);
 
 //=============================================================================

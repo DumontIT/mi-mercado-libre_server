@@ -2,6 +2,7 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 15/04/14, at 12:10.
  */
+require('../model/user');
 var mongoose = require('mongoose')
     , User = mongoose.model('User');
 
