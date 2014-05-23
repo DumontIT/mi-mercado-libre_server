@@ -9,14 +9,18 @@ var mongoose = require('mongoose')
     , meli = require('mercadolibre')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
 
+var findById = function (id, callback) {
+    meliObject.get('/sites/' + id, {}, callback);
+};
+
 exports.findAll = function (req, res, callback) {
-    var getSites = function (callback) {
+    var getSitesBasicInfo = function (callback) {
         meliObject.get('/sites', {}, callback);
     };
 
     if (req && res) {
 
-        getSites(function (error, data) {
+        getSitesBasicInfo(function (error, data) {
             //  TODO : Performance : Save this sites and check against ML once a week or something similar.
 
             if (error) {
@@ -35,11 +39,20 @@ exports.findAll = function (req, res, callback) {
                 callback(error, sites);
             } else {
                 if (sites.length === 0) {
-                    getSites(function (error, data) {
-                        data.forEach(function (each) {
-                            new Site({id: each.id, name: each.name}).save();
-                        });
-                        callback(error, data);
+                    getSitesBasicInfo(function (error, sites) {
+
+                        var updatedSites = [];
+                        for (var i = 0; i < sites.length; i++) {
+                            var eachSite = sites[i];
+
+                            findById(eachSite.id, function (error, completeSite) {
+                                var createdSite = new Site({id: completeSite.id, name: completeSite.name, currencies: completeSite.currencies});
+                                createdSite.save();
+                                console.log('Saved site: ' + completeSite.id + ', currencies: ' + completeSite.currencies.length);
+                            });
+                        }
+
+                        callback(error, updatedSites);
                     });
                 } else {
                     callback(error, sites);

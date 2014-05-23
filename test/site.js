@@ -38,9 +38,9 @@ describe('site.findAll', function () {
             expect(aSite).to.have.property('currencies');
 
             expect(aSite.currencies).to.be.an('array');
-            expect(aSite.currencies.length).to.be.equal(0);
-//            expect(aSite.currencies[0]).to.have.property('id');
-//            expect(aSite.currencies[0]).to.have.property('symbol');
+            expect(aSite.currencies.length).to.be.greaterThan(0);
+            expect(aSite.currencies[0]).to.have.property('id');
+            expect(aSite.currencies[0]).to.have.property('symbol');
 
             done();
         });
