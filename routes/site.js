@@ -39,6 +39,7 @@ exports.findAll = function (req, res, callback) {
                 console.log('Returning stored ML sites...');
                 res.send(200, sites);
             } else {
+                console.log('There are NOT any site stored in DB');
                 getSitesBasicInfo(afterGettingSitesBasicInfo);
             }
         });
