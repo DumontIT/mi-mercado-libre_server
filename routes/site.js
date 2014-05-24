@@ -5,6 +5,7 @@
 require('../model/site');
 var mongoose = require('mongoose')
     , Site = mongoose.model('Site')
+    , async = require('async')
     , properties = require('../properties')
     , meli = require('mercadolibre')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
@@ -39,22 +40,36 @@ exports.findAll = function (req, res, callback) {
                 callback(error, sites);
             } else {
                 if (sites.length === 0) {
+                    console.log('There no sites stored in DB, getting them from ML API...');
                     getSitesBasicInfo(function (error, sites) {
 
-                        var updatedSites = [];
-                        for (var i = 0; i < sites.length; i++) {
-                            var eachSite = sites[i];
+                        var doForEachSite = function (eachSite, callback) {
+                            findById(eachSite.id, callback);
+                        };
+                        var afterHavingAllSites = function (error, sites) {
+                            var sitesForResponse = [];
 
-                            findById(eachSite.id, function (error, completeSite) {
-                                var createdSite = new Site({id: completeSite.id, name: completeSite.name, currencies: completeSite.currencies});
-                                createdSite.save();
-                                console.log('Saved site: ' + completeSite.id + ', currencies: ' + completeSite.currencies.length);
-                            });
-                        }
+                            for (var i = 0; i < sites.length; i++) {
+                                var completeSite = sites[i];
+                                var reducedSite = {id: completeSite.id, name: completeSite.name, currencies: completeSite.currencies};
 
-                        callback(error, updatedSites);
+                                new Site(reducedSite).save();
+                                console.log('Saved site: ' + reducedSite.id + ', currencies: ' + reducedSite.currencies.length);
+
+                                sitesForResponse.push(reducedSite);
+                            }
+
+                            callback(error, sitesForResponse);
+                        };
+
+                        var functions = sites.map(function (eachSite) {
+                            return doForEachSite.bind(undefined, eachSite);
+                        });
+
+                        async.parallel(functions, afterHavingAllSites);
                     });
                 } else {
+                    console.log('There are stored sites in DB, returning...');
                     callback(error, sites);
                 }
             }
