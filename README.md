@@ -1,2 +1,2 @@
-NodeJS server for "Fácil y Rápido mobile game".
+NodeJS server for "Mi Mercado Libre" Android app.
 ===
