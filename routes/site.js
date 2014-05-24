@@ -16,14 +16,12 @@ var findById = function (id, callback) {
 
 exports.findAll = function (req, res, callback) {
     var getSitesBasicInfo = function (callback) {
+        console.log('Getting sites from ML REST API...');
         meliObject.get('/sites', {}, callback);
     };
 
     if (req && res) {
-
-        getSitesBasicInfo(function (error, data) {
-            //  TODO : Performance : Save this sites and check against ML once a week or something similar.
-
+        var afterGettingSitesBasicInfo = function (error, data) {
             if (error) {
                 console.log('An error occurred while getting ML sites:' + error);
                 res.send(500, error);
@@ -31,8 +29,19 @@ exports.findAll = function (req, res, callback) {
                 console.log('Obtained sites: ' + data.length);
                 res.send(200, data);
             }
-        });
+        };
 
+        Site.find(function (error, sites) {
+            if (error) {
+                console.log('An error occurred while getting ML sites from DB:' + error);
+                getSitesBasicInfo(afterGettingSitesBasicInfo);
+            } else if (sites.length > 0) {
+                console.log('Returning stored ML sites...');
+                res.send(200, sites);
+            } else {
+                getSitesBasicInfo(afterGettingSitesBasicInfo);
+            }
+        });
     } else {
         Site.find(function (error, sites) {
             if (error) {
