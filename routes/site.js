@@ -18,9 +18,9 @@ exports.findAll = function (req, res, callback) {
     var sendResponse = function (req, res, callback, sites) {
         if (req && res) {
             console.log('Obtained sites: ' + sites.length);
-            res.send(200, sites);
+            res.send(200, {sites: sites});
         } else {
-            callback(undefined, sites);
+            callback(undefined, {sites: sites});
         }
     };
 

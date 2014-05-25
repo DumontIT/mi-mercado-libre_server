@@ -15,8 +15,9 @@ describe('GET /sites', function () {
 
             expect(error).to.not.be.ok();
             expect(response.statusCode).to.be.equal(200);
-            expect(response.body).to.be.an('array');
-            expect(response.body.length).to.be.equal(SITES_LENGTH);
+            expect(response.body).to.be.an('object');
+            expect(response.body.sites).to.be.an('array');
+            expect(response.body.sites.length).to.be.equal(SITES_LENGTH);
 
             done();
         });
@@ -27,12 +28,13 @@ describe('site.findAll', function () {
     it('Should return all sites: ' + SITES_LENGTH, function (done) {
         require('mongoose').connect('mongodb://' + properties.db.host + '/' + properties.db.schema);
 
-        site.findAll(undefined, undefined, function (error, sites) {
+        site.findAll(undefined, undefined, function (error, response) {
             expect(error).to.not.be.ok();
-            expect(sites).to.be.an('array');
-            expect(sites.length).to.be.equal(SITES_LENGTH);
+            expect(response).to.be.an('object');
+            expect(response.sites).to.be.an('array');
+            expect(response.sites.length).to.be.equal(SITES_LENGTH);
 
-            var aSite = sites[0];
+            var aSite = response.sites[0];
             expect(aSite).to.have.property('id');
             expect(aSite).to.have.property('name');
             expect(aSite).to.have.property('currencies');
