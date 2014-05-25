@@ -20,7 +20,7 @@ exports.findAll = function (req, res, callback) {
             console.log('Obtained sites: ' + sites.length);
             res.send(200, sites);
         } else {
-            callback(error, sites);
+            callback(undefined, sites);
         }
     };
 
