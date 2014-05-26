@@ -17,6 +17,10 @@ describe("GET /:siteId/averagePrice/:query", function () {
             expect(response.body).to.have.property('minimumPrice');
             expect(response.body).to.have.property('maximumPrice');
             expect(response.body).to.have.property('currencyId');
+            expect(response.body).to.have.property('filters');
+            expect(response.body.filters).to.be.an('array');
+            expect(response.body).to.have.property('availableFilters');
+            expect(response.body.availableFilters).to.be.an('array');
 
             done();
         });

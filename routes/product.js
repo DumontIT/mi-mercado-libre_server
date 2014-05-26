@@ -43,7 +43,9 @@ exports.calculateAveragePrice = function (req, res) {
                 averagePrice: Math.round(total / data.paging.limit),
                 minimumPrice: Math.round(minimum),
                 maximumPrice: Math.round(maximum),
-                currencyId: data.results[0].currency_id
+                currencyId: data.results[0].currency_id,
+                filters: data.filters,
+                availableFilters: data.available_filters
             });
         }
 
