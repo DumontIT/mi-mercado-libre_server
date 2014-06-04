@@ -12,7 +12,7 @@ exports.calculateAveragePrice = function (req, res) {
 
     meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
 
-        if (error) {
+        if (error || !data.results) {
             console.log('An error ocurred while calling Mercado Libre API: ' + error);
 
             var statusCode = 500;
@@ -20,7 +20,10 @@ exports.calculateAveragePrice = function (req, res) {
                 statusCode = 504;
             }
 
-            res.send(statusCode, {message: error.message});
+            res.send(statusCode, {
+                message: error.message,
+                response: data
+            });
         } else {
             var total = 0;
             var minimum;
