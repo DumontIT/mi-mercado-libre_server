@@ -41,7 +41,7 @@ if ('development' == app.get('env')) {
 var auth = express.basicAuth(function (username, password, callback) {
     console.log('Trying to login username: ' + username);
 
-    callback({message: 'Login required'}, username === 'admin' && password == 'admin');
+    callback({message: 'Login required'}, username === properties.auth.user && password == properties.auth.pass);
 });
 
 //=============================================================================
