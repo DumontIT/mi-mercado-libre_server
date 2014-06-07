@@ -23,7 +23,12 @@ describe('GET /users', function () {
 describe('POST /users/:id/subscriptions', function () {
     it('Should return true', function (done) {
         var id = '123456';
-        request.post(properties.uri + '/users/' + id + '/subscriptions', function (error, response) {
+        request.post({
+                         uri: properties.uri + '/users/' + id + '/subscriptions',
+                         body: {
+                             query: 'ipod nano'
+                         }
+                     }, function (error, response) {
 
             expect(error).to.not.be.ok();
             expect(response.statusCode).to.be.equal(200);

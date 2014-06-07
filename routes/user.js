@@ -17,6 +17,6 @@ exports.findAll = function (req, res) {
 };
 
 exports.addSubscriptions = function (req, res) {
-    console.log('Adding subscriptions for user: ' + req.params.id);
+    console.log('Adding subscriptions for user: ' + req.params.id + ', and query: ' + req.body.query);
     res.send(200);
 };
