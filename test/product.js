@@ -4,7 +4,7 @@
  */
 var properties = require('../properties')
     , expect = require('expect.js')
-    , request = require('request').defaults({json: true, auth: properties.auth});
+    , request = require('request').defaults({json: true});
 
 describe("GET /:siteId/averagePrice/:query", function () {
     it("Must return an object with product information when searching valid values", function (done) {

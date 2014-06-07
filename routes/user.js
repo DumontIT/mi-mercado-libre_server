@@ -15,3 +15,8 @@ exports.findAll = function (req, res) {
         }
     });
 };
+
+exports.addSubscriptions = function (req, res) {
+    console.log('Adding subscriptions for user: ' + req.params.id);
+    res.send(200);
+};

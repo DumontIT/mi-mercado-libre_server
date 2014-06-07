@@ -45,6 +45,11 @@ var auth = express.basicAuth(function (username, password, callback) {
 });
 
 //=============================================================================
+//                      Prepare secured resources to expone
+//=============================================================================
+app.post('/users/:id/subscriptions', auth, user.addSubscriptions);
+
+//=============================================================================
 //                      Prepare public resources to expone
 //=============================================================================
 
@@ -57,7 +62,7 @@ app.get('/users', user.findAll);
 app.get('/sites', site.findAll);
 
 //======    Resources for Precio Promedio module
-app.get('/:siteId/averagePrice/:query', auth, product.calculateAveragePrice);
+app.get('/:siteId/averagePrice/:query', product.calculateAveragePrice);
 
 //=============================================================================
 //                      Connect to database
