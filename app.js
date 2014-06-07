@@ -37,6 +37,13 @@ if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
 
+// Asynchronous authentication
+var auth = express.basicAuth(function (username, password, callback) {
+    console.log('Trying to login username: ' + username);
+
+    callback({message: 'Login required'}, username === 'admin' && password == 'admin');
+});
+
 //=============================================================================
 //                      Prepare public resources to expone
 //=============================================================================
@@ -50,7 +57,7 @@ app.get('/users', user.findAll);
 app.get('/sites', site.findAll);
 
 //======    Resources for Precio Promedio module
-app.get('/:siteId/averagePrice/:query', product.calculateAveragePrice);
+app.get('/:siteId/averagePrice/:query', auth, product.calculateAveragePrice);
 
 //=============================================================================
 //                      Connect to database

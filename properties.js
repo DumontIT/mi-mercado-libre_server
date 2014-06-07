@@ -15,3 +15,7 @@ exports.db = {
     host: 'localhost',
     schema: 'mi-mercado-libre'
 };
+exports.auth = {
+    user: 'test',
+    pass: 'test'
+};

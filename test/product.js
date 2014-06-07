@@ -2,9 +2,9 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 20/05/14, at 22:45.
  */
-var expect = require('expect.js')
-    , request = require('request').defaults({json: true})
-    , properties = require('../properties');
+var properties = require('../properties')
+    , expect = require('expect.js')
+    , request = require('request').defaults({json: true, auth: properties.auth});
 
 describe("GET /:siteId/averagePrice/:query", function () {
     it("Must return an object with product information when searching valid values", function (done) {
