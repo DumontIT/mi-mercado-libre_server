@@ -4,6 +4,7 @@
  */
 
 module.exports = function (app) {
+    require('./site')(app);
     require('./user')(app);
 };
 

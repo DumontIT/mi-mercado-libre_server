@@ -11,9 +11,7 @@ var mongoose = require('mongoose');
 
 //  Load own modules
 var properties = require('./properties');
-var user = require('./routes/user');
 var product = require('./routes/product');
-var site = require('./routes/site');
 
 //  Set-Up ExpressJS server.
 var app = express();
@@ -43,8 +41,6 @@ require('./routes')(app);
 app.get('/', function (req, res) {
     res.send('Welcome to Super Mercado Libre server.');
 });
-
-app.get('/sites', site.findAll);
 
 //======    Resources for Precio Promedio module
 app.get('/:siteId/averagePrice/:query', product.calculateAveragePrice);

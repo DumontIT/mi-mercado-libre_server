@@ -14,7 +14,7 @@ var findById = function (id, callback) {
     meliObject.get('/sites/' + id, {}, callback);
 };
 
-exports.findAll = function (req, res, callback) {
+var findAll = function (req, res, callback) {
     var sendResponse = function (req, res, callback, sites) {
         if (req && res) {
             console.log('Obtained sites: ' + sites.length);
@@ -74,4 +74,8 @@ exports.findAll = function (req, res, callback) {
             getSitesBasicInfo(afterGettingSitesBasicInfo);
         }
     });
+};
+
+module.exports = function (app) {
+    app.get('/sites', findAll);
 };
