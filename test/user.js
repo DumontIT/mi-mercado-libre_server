@@ -13,7 +13,7 @@ describe('GET /users', function () {
             expect(error).to.not.be.ok();
             expect(response.statusCode).to.be.equal(200);
             expect(response.body).to.be.an('array');
-            expect(response.body.length).to.be.equal(2);
+            expect(response.body.length).to.be.greaterThan(2);
 
             done();
         });
