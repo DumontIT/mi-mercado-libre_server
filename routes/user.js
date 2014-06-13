@@ -18,12 +18,17 @@ var findAll = function (req, res) {
 };
 
 var findOrCreateUser = function (req, res, next) {
+    console.log('Finding user w/ id: %s', req.params.id);
+
     User.findOne({id: req.params.id}, function (error, user) {
 
         if (error) {
             console.log('An error ocurred while finding a user by its ID: %s', req.params.id);
         } else if (!user) {
             console.log('No user found!');
+            User.create({
+                            id: req.params.id
+                        });
         } else {
             console.log('User found: %s', user.id);
         }

@@ -6,9 +6,7 @@ var SCHEMA_NAME = 'User';
 console.log('Creating schema: ' + SCHEMA_NAME);
 var mongoose = require('mongoose')
     , userSchema = mongoose.Schema({
-                                       email: {type: String, validate: /.+@.+\..+/, unique: true},
-                                       name: {type: String, required: true},
-                                       lastName: {type: String, required: true}
+                                       id: {type: String, unique: true}
                                    });
 
 /************************************************************************************/
@@ -20,7 +18,7 @@ var mongoose = require('mongoose')
  * Prints a greeting to the console.
  */
 userSchema.methods.sayHello = function () {
-    var greeting = this.name ? "Hey dude! My name is " + this.name : "I don't have a name";
+    var greeting = this.id ? "Hey dude! My id is " + this.id : "I don't have a name";
     console.log(greeting);
 };
 

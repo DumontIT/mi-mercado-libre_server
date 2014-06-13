@@ -62,19 +62,19 @@ var User = mongoose.model('User');
 
 User.find(function (err, users) {
     var populate = function () {
-        var createUser = function (name, lastName, email) {
-            return new User({ name: name, lastName: lastName, email: email });
+        var createUser = function (id) {
+            return new User({ id: id});
         };
         var users = [
-            createUser('Nahuel', 'Barrios', 'barrios.nahuel@gmail.com'), createUser('Nombre', 'Apellido', 'email@gmail.com')
+            createUser('1353523sgs'), createUser('12u4hi1i1')
         ];
 
         users.forEach(function (item, index) {
             item.save(function (err, storedItem) {
                 if (err) {
-                    console.log('An error ocurred while storing user: ' + users[index].email + ', error: ' + err);
+                    console.log('An error ocurred while storing user: ' + users[index].id + ', error: ' + err);
                 } else {
-                    console.log('Stored item: ' + users[index].email);
+                    console.log('Stored item: ' + users[index].id);
                 }
             })
         });
