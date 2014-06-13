@@ -37,28 +37,13 @@ if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
 
-// Asynchronous authentication
-var auth = express.basicAuth(function (username, password, callback) {
-    console.log('Trying to login username: ' + username);
-
-    callback(undefined, username === properties.auth.user && password == properties.auth.pass);
-});
-
-//=============================================================================
-//                      Prepare secured resources to expone
-//=============================================================================
-app.post('/users/:id/subscriptions', auth, user.addSubscriptions);
-
-//=============================================================================
-//                      Prepare public resources to expone
-//=============================================================================
+require('./routes')(app);
 
 //  Expose resources.
 app.get('/', function (req, res) {
     res.send('Welcome to Super Mercado Libre server.');
 });
 
-app.get('/users', user.findAll);
 app.get('/sites', site.findAll);
 
 //======    Resources for Precio Promedio module
