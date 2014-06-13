@@ -7,7 +7,7 @@ var properties = require('../properties')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
 
 
-exports.calculateAveragePrice = function (req, res) {
+var calculateAveragePrice = function (req, res) {
     console.log('Calculating average price in site: ' + req.params.siteId + ' for query: ' + req.params.query);
 
     meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
@@ -54,4 +54,8 @@ exports.calculateAveragePrice = function (req, res) {
 
     });
 
+};
+
+module.exports = function (app) {
+    app.get('/:siteId/averagePrice/:query', calculateAveragePrice);
 };
