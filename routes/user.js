@@ -20,6 +20,11 @@ var findAll = function (req, res) {
 var findOrCreateUser = function (req, res, next) {
     console.log('Finding user w/ id: %s', req.params.id);
 
+    var updateRequestAndCallNext = function (user) {
+        req.user = user;
+        next();
+    };
+
     User.findOne({id: req.params.id}, function (error, user) {
 
         if (error) {
@@ -28,14 +33,24 @@ var findOrCreateUser = function (req, res, next) {
             console.log('No user found!');
             User.create({
                             id: req.params.id
-                        });
+                        }, function (error, user) {
+
+                updateRequestAndCallNext(user);
+            });
         } else {
             console.log('User found: %s', user.id);
+            updateRequestAndCallNext(user);
         }
     });
+};
+
+function addSubscriptions(req, res, next) {
+    console.log('Adding subscriptions for user: %s', req.user.id);
+
+    //  TODO : Link user subscriptions to a specific product!
 
     next();
-};
+}
 
 function sendDummyResponse(req, res) {
     res.send(200);
@@ -43,5 +58,5 @@ function sendDummyResponse(req, res) {
 
 module.exports = function (app) {
     app.get('/users', findAll);
-    app.post('/users/:id/subscriptions', auth.basicAuth, findOrCreateUser, sendDummyResponse);
+    app.post('/users/:id/subscriptions', auth.basicAuth, findOrCreateUser, addSubscriptions, sendDummyResponse);
 };
