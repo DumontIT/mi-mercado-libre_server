@@ -73,7 +73,7 @@ module.exports.findOrCreate = function (req, res, next) {
         };
 
         if (error) {
-            console.log('An error ocurred while finding a prodyct by query: %s', req.params.id);
+            console.log('An error ocurred while finding a product by query: %s', req.params.id);
         } else if (!product) {
             console.log('No product found!');
             Product.create({
