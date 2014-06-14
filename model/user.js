@@ -7,7 +7,7 @@ console.log('Creating schema: ' + SCHEMA_NAME);
 var mongoose = require('mongoose')
     , userSchema = mongoose.Schema({
                                        id: {type: String, unique: true},
-                                       queries: {type: [String]}
+                                       queries: {type: []}
                                    });
 
 /************************************************************************************/

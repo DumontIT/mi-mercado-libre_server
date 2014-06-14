@@ -59,7 +59,7 @@ function updateQueriesAndFilters(req, res, next) {
     for (index; index < req.user.queries.length; index++) {
         var eachQuery = req.user.queries[index];
 
-        if (eachQuery === userQuery) {
+        if (eachQuery.query === userQuery) {
             found = true;
             console.log('User already has the saved query: %s', userQuery);
             break;
@@ -68,7 +68,7 @@ function updateQueriesAndFilters(req, res, next) {
 
     if (!found) {
         console.log('Adding a new saved query: %s', userQuery);
-        req.user.queries.push(userQuery);
+        req.user.queries.push({query: userQuery});
 
         console.log('Updating user on storage...');
         User.update({
