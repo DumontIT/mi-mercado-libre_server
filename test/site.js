@@ -4,7 +4,6 @@
  */
 var expect = require('expect.js')
     , request = require('request').defaults({ json: true })
-    , site = require('../routes/site')
     , properties = require('../properties');
 
 var SITES_LENGTH = 13;
