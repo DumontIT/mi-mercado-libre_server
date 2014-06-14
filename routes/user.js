@@ -26,7 +26,6 @@ var findOrCreateUser = function (req, res, next) {
     };
 
     User.findOne({id: req.params.id}, function (error, user) {
-
         if (error) {
             console.log('An error ocurred while finding a user by its ID: %s', req.params.id);
         } else if (!user) {
@@ -52,11 +51,48 @@ function addSubscriptions(req, res, next) {
     next();
 }
 
+function updateQueriesAndFilters(req, res, next) {
+    var userQuery = req.body.query
+        , found
+        , index = 0;
+
+    for (index; index < req.user.queries.length; index++) {
+        var eachQuery = req.user.queries[index];
+
+        if (eachQuery === userQuery) {
+            found = true;
+            console.log('User already has the saved query: %s', userQuery);
+            break;
+        }
+    }
+
+    if (!found) {
+        console.log('Adding a new saved query: %s', userQuery);
+        req.user.queries.push(userQuery);
+
+        console.log('Updating user on storage...');
+        User.update({
+                        _id: req.user._id
+                    }, {
+                        $set: {queries: req.user.queries}
+                    }, function (error, updatedDocuments) {
+
+            if (error) {
+                console.log('An error ocurred while finding a user by its ID: %s', req.params.id);
+            } else {
+                console.log('Successfully updated users: %s', updatedDocuments);
+            }
+        });
+    }
+
+    next();
+}
+
 function sendDummyResponse(req, res) {
     res.send(200);
 }
 
 module.exports = function (app) {
     app.get('/users', findAll);
-    app.post('/users/:id/subscriptions', auth.basicAuth, findOrCreateUser, addSubscriptions, sendDummyResponse);
+    app.post('/users/:id/subscriptions', auth.basicAuth, findOrCreateUser, updateQueriesAndFilters, addSubscriptions, sendDummyResponse);
 };
