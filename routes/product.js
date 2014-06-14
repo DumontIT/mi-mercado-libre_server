@@ -2,9 +2,12 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 19/05/14, at 23:02.
  */
+require('../model/product');
 var properties = require('../properties')
     , meli = require('mercadolibre')
-    , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey);
+    , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey)
+    , mongoose = require('mongoose')
+    , Product = mongoose.model('Product');
 
 
 var calculateAveragePrice = function (req, res) {
@@ -58,4 +61,30 @@ var calculateAveragePrice = function (req, res) {
 
 module.exports = function (app) {
     app.get('/:siteId/averagePrice/:query', calculateAveragePrice);
+};
+
+module.exports.findOrCreate = function (req, res, next) {
+    console.log('Finding product w/ query: %s', req.params.query);
+
+    Product.findOne({query: req.params.query}, function (error, product) {
+        var updateRequestAndCallNext = function (product) {
+            req.product = product;
+            next();
+        };
+
+        if (error) {
+            console.log('An error ocurred while finding a prodyct by query: %s', req.params.id);
+        } else if (!product) {
+            console.log('No product found!');
+            Product.create({
+                               query: req.params.query
+                           }, function (error, product) {
+
+                updateRequestAndCallNext(product);
+            });
+        } else {
+            console.log('Product found: %s', product.query);
+            updateRequestAndCallNext(product);
+        }
+    });
 };

@@ -4,7 +4,8 @@
  */
 var properties = require('../properties')
     , expect = require('expect.js')
-    , request = require('request').defaults({json: true});
+    , request = require('request').defaults({json: true})
+    , product = require('../routes/product');
 
 describe("GET /:siteId/averagePrice/:query", function () {
     it("Must return an object with product information when searching valid values", function (done) {
@@ -24,5 +25,18 @@ describe("GET /:siteId/averagePrice/:query", function () {
 
             done();
         });
+    });
+});
+
+describe("product.findOrCreate", function () {
+    it("Must return a new product when there is no existing product for the specified query", function (done) {
+
+        product.findOrCreate({params: {query: 'this query does not exists'}}, undefined, function (req, res) {
+            expect(req).to.be.ok();
+            expect(req.product).to.be.ok();
+            expect(req.product).to.have.property('_id');
+        });
+
+        done();
     });
 });
