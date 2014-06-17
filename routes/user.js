@@ -43,11 +43,24 @@ var findOrCreateUser = function (req, res, next) {
 };
 
 function addSubscriptions(req, res, next) {
-    console.log('Adding subscriptions for user: %s', req.user.id);
+    var userQuery = req.body.query
+        , selectedSubscriptions = req.body.selectedSubscriptions;
+    console.log('Adding %s subscription/s for user: %s', selectedSubscriptions.length, req.user.id);
 
-    //  TODO : Link user subscriptions to a specific product!
+    var product = findQuery(req.user.queries, userQuery);
+    console.log('Updating user subscriptions for product: %s', product.userQuery);
 
     next();
+}
+
+function findQuery(queries, userQuery) {
+    for (var index = 0; index < queries.length; index++) {
+        var eachQuery = queries[index];
+
+        if (eachQuery.userQuery === userQuery) {
+            return eachQuery;
+        }
+    }
 }
 
 function updateFilters(query, filters) {
