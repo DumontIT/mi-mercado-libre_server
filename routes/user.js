@@ -5,7 +5,8 @@
 require('../model/user');
 var mongoose = require('mongoose')
     , User = mongoose.model('User')
-    , auth = require('../controllers/authentication');
+    , auth = require('../controllers/authentication')
+    , _ = require('underscore');
 
 var findAll = function (req, res) {
     User.find(function (err, users) {
@@ -47,20 +48,15 @@ function addSubscriptions(req, res, next) {
         , selectedSubscriptions = req.body.selectedSubscriptions;
     console.log('Adding %s subscription/s for user: %s', selectedSubscriptions.length, req.user.id);
 
-    var product = findQuery(req.user.queries, userQuery);
-    console.log('Updating user subscriptions for product: %s', product.userQuery);
+
+    var query = _.find(req.user.queries, function (eachQuery) {
+        return eachQuery.userQuery === userQuery;
+    });
+    console.log('Updating user subscriptions for query: %s', query.userQuery);
+
+    query.subscriptions = _.chain(query.subscriptions).union(selectedSubscriptions).compact().value();
 
     next();
-}
-
-function findQuery(queries, userQuery) {
-    for (var index = 0; index < queries.length; index++) {
-        var eachQuery = queries[index];
-
-        if (eachQuery.userQuery === userQuery) {
-            return eachQuery;
-        }
-    }
 }
 
 function updateFilters(query, filters) {
@@ -71,14 +67,9 @@ function updateFilters(query, filters) {
 
         filters.forEach(function (newFilter) {
 
-            var storedFilter;
-            for (var i = 0; i < query.filters.length; i++) {
-                if (query.filters[i].id === newFilter.id) {
-                    storedFilter = query.filters[i];
-                    break;
-                }
-            }
-
+            var storedFilter = _.find(query.filters, function (filter) {
+                return filter.id === newFilter.id;
+            });
             if (storedFilter) {
                 console.log('Existent filter, merging its values...');
 
