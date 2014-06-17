@@ -64,7 +64,7 @@ var findAll = function (req, res, callback) {
 
     Site.find(function (error, sites) {
         if (error) {
-            console.log('An error occurred while getting ML sites from DB:' + error);
+            console.log('An error occurred while getting ML sites from DB: ' + error);
             getSitesBasicInfo(afterGettingSitesBasicInfo);
         } else if (sites.length > 0) {
             console.log('Returning stored ML sites...');
