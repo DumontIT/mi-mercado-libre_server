@@ -54,6 +54,11 @@ http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
+//=============================================================================
+//                      Runs cron job to check for new publishments and send updates
+//=============================================================================
+require('./routes/product').runCronJobToCheckForNewPublishments();
+
 /*****************************************************************************/
 /*****************************************************************************/
 /*  Populate database                                                        */

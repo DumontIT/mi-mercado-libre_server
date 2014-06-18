@@ -88,3 +88,17 @@ module.exports.findOrCreate = function (req, res, next) {
         }
     });
 };
+
+module.exports.runCronJobToCheckForNewPublishments = function () {
+    var cronJob = require('cron').CronJob;
+
+    var job = function () {
+        console.log('This message will be printed every 30 seconds...');
+    };
+
+    new cronJob({
+                    cronTime: '*/30 * * * * *',
+                    onTick: job,
+                    start: true//  Starts the job right now
+                });
+};
