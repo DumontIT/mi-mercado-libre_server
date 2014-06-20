@@ -6,6 +6,8 @@ var _ = require('underscore');
 
 /**
  * Merges two object-like arrays based on a key property and also merging its array like attributes specified in arraysToMergeProperties.
+ * It also removes falsy values after merging object properties.
+ *
  * @param firstArray The original object-like array.
  * @param secondArray An object-like array to add to the firstArray.
  * @param keyProperty The object property that will be used to check if objects from different arrays are the same or not.
@@ -13,8 +15,11 @@ var _ = require('underscore');
  * @returns The updated original array.
  */
 function merge(firstArray, secondArray, keyProperty, arraysToMergeProperties) {
-    function mergeObjectProperties(firstValues, secondValues) {
-        return _.chain(firstValues).union(secondValues).compact().value();
+
+    function mergeObjectProperties(object, otherObject, objectPropertiesToMerge) {
+        _.each(objectPropertiesToMerge, function (eachProperty) {
+            object[eachProperty] = _.chain(object[eachProperty]).union(otherObject[eachProperty]).compact().value();
+        });
     }
 
     if (firstArray.length === 0) {
@@ -22,18 +27,15 @@ function merge(firstArray, secondArray, keyProperty, arraysToMergeProperties) {
             firstArray.push(each);
         });
     } else {
-        _.each(secondArray, function (onSecond) {
-            var same = _.find(firstArray, function (item) {
-                return item[keyProperty] === onSecond[keyProperty];
+        _.each(secondArray, function (itemFromSecond) {
+            var itemFromFirst = _.find(firstArray, function (item) {
+                return item[keyProperty] === itemFromSecond[keyProperty];
             });
 
-            if (same) {
-                _.each(arraysToMergeProperties, function (eachProperty) {
-                    same[eachProperty] = mergeObjectProperties(same[eachProperty], onSecond[eachProperty]);
-                });
-
+            if (itemFromFirst) {
+                mergeObjectProperties(itemFromFirst, itemFromSecond, arraysToMergeProperties);
             } else {
-                firstArray.push(onSecond);
+                firstArray.push(itemFromSecond);
             }
         });
     }
