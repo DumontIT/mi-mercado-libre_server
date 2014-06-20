@@ -14,7 +14,7 @@ var properties = require('../properties')
 var calculateAveragePrice = function (req, res) {
     console.log('Calculating average price in site: ' + req.params.siteId + ' for query: ' + req.params.query);
 
-    meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
+    meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query, limit: 200}, function (error, data) {
 
         if (error || !data.results) {
             console.log('An error ocurred while calling Mercado Libre API: ' + error);
