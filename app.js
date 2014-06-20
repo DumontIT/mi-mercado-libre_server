@@ -5,8 +5,13 @@ var express = require('express')
     , rollbar = require("rollbar")
     , http = require('http')
     , path = require('path')
-    , mongoose = require('mongoose')
-    , properties = require('./properties');
+    , mongoose = require('mongoose');
+
+//=============================================================================
+//                      My own module dependencies
+//=============================================================================
+var properties = require('./properties');
+require('./utilities/nbempire.extend.underscore');
 
 //  Set-Up ExpressJS server.
 var app = express();

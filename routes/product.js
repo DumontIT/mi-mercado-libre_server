@@ -132,40 +132,13 @@ function afterUpdatingProduct(error, product) {
     }
 }
 
-function mergeProductFilters(firstArray, secondArray, keyProperty, arraysToMergeProperties) {
-    function mergeValues(firstValues, secondValues) {
-        return _.chain(firstValues).union(secondValues).compact().value();
-    }
-
-    if (firstArray.length === 0) {
-        _.each(secondArray, function (each) {
-            firstArray.push(each);
-        });
-    } else {
-        _.each(secondArray, function (onSecond) {
-            var same = _.find(firstArray, function (item) {
-                return item[keyProperty] === onSecond[keyProperty];
-            });
-
-            if (same) {
-                _.each(arraysToMergeProperties, function (eachProperty) {
-                    same[eachProperty] = mergeValues(same[eachProperty], onSecond[eachProperty]);
-                });
-
-            } else {
-                firstArray.push(onSecond);
-            }
-        });
-    }
-}
-
 module.exports.update = function (req, res, next) {
     console.log('Updating product %s', req.product.query);
 
     var body = req.body
         , product = req.product;
 
-    mergeProductFilters(product.filters, body.selectedFilters, 'id', ['values']);
+    product.filters = _.merge(product.filters, body.selectedFilters, 'id', ['values']);
     product.markModified('filters');
 
     product.save(afterUpdatingProduct);
