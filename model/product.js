@@ -8,7 +8,7 @@ console.log('Creating schema: ' + SCHEMA_NAME);
 var mongoose = require('mongoose')
     , productSchema = mongoose.Schema({
                                           query: {type: String, unique: true},
-                                          filters: {type: [String]},
+                                          filters: {type: []},
                                           subscribedUsers: {type: [mongoose.Schema.Types.ObjectId]}
                                       });
 

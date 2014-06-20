@@ -3,10 +3,11 @@
  * Created on 15/04/14, at 12:10.
  */
 require('../model/user');
-var mongoose = require('mongoose')
+var _ = require('underscore')
+    , mongoose = require('mongoose')
     , User = mongoose.model('User')
     , auth = require('../controllers/authentication')
-    , _ = require('underscore');
+    , product = require('./product');
 
 var findAll = function (req, res) {
     User.find(function (err, users) {
@@ -111,7 +112,7 @@ function afterUpdatingUser(error, user, numberAffected, next) {
     }
 }
 
-function updateQueriesAndFilters(req, res, next) {
+function updateUserQueriesAndFilters(req, res, next) {
     var userQuery = req.body.query
         , found
         , index = 0;
@@ -167,12 +168,21 @@ function isRequestValid(req, res, next) {
     }
 }
 
+function updateProductQueriesAndFilters(req, res, next) {
+    req.params.query = req.body.query;
+
+    var update = function (req, res) {
+        product.update(req, res, next);
+    };
+    product.findOrCreate(req, res, update);
+}
+
 function sendDummyResponse(req, res) {
     res.send(200);
 }
 
 module.exports = function (app) {
     app.get('/users', findAll);
-    app.post('/users/:id/subscriptions', auth.basicAuth, isRequestValid, findOrCreateUser, updateQueriesAndFilters, addSubscriptions,
-             sendDummyResponse);
+    app.post('/users/:id/subscriptions', auth.basicAuth, isRequestValid, findOrCreateUser, updateUserQueriesAndFilters, addSubscriptions,
+             updateProductQueriesAndFilters, sendDummyResponse);
 };

@@ -6,7 +6,7 @@ require('../model/product');
 var properties = require('../properties')
     , rollbar = require('rollbar')
     , moment = require('moment')
-    , rollbar = require('rollbar')
+    , _ = require('underscore')
     , meli = require('mercadolibre')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey)
     , mongoose = require('mongoose')
@@ -67,13 +67,17 @@ module.exports = function (app) {
     app.get('/:siteId/averagePrice/:query', calculateAveragePrice);
 };
 
+/**
+ * Will set req.product attribute before calling next.
+ * @param req Must contains params.query attribute.
+ */
 module.exports.findOrCreate = function (req, res, next) {
     console.log('Finding product w/ query: %s', req.params.query);
 
     Product.findOne({query: req.params.query}, function (error, product) {
         var updateRequestAndCallNext = function (product) {
             req.product = product;
-            next();
+            next(req, res);
         };
 
         if (error) {
@@ -118,4 +122,53 @@ module.exports.runCronJobToCheckForNewPublishments = function () {
 //                    onTick: job,
 //                    start: true//  Starts the job right now
 //                });
+};
+
+function afterUpdatingProduct(error, product) {
+    if (error) {
+        console.log('An error ocurred while updating the product: %s', product.query);
+    } else {
+        console.log('Successfully updated product: %s', product.query);
+    }
+}
+
+function mergeProductFilters(firstArray, secondArray, keyProperty, arraysToMergeProperties) {
+    function mergeValues(firstValues, secondValues) {
+        return _.chain(firstValues).union(secondValues).compact().value();
+    }
+
+    if (firstArray.length === 0) {
+        _.each(secondArray, function (each) {
+            firstArray.push(each);
+        });
+    } else {
+        _.each(secondArray, function (onSecond) {
+            var same = _.find(firstArray, function (item) {
+                return item[keyProperty] === onSecond[keyProperty];
+            });
+
+            if (same) {
+                _.each(arraysToMergeProperties, function (eachProperty) {
+                    same[eachProperty] = mergeValues(same[eachProperty], onSecond[eachProperty]);
+                });
+
+            } else {
+                firstArray.push(onSecond);
+            }
+        });
+    }
+}
+
+module.exports.update = function (req, res, next) {
+    console.log('Updating product %s', req.product.query);
+
+    var body = req.body
+        , product = req.product;
+
+    mergeProductFilters(product.filters, body.selectedFilters, 'id', ['values']);
+    product.markModified('filters');
+
+    product.save(afterUpdatingProduct);
+
+    next();
 };
