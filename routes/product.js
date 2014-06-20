@@ -63,6 +63,16 @@ var calculateAveragePrice = function (req, res) {
 
 };
 
+var afterUpdatingProduct = function (error, product) {
+    if (error) {
+        console.log('An error ocurred while updating the product: %s', product.query);
+        rollbar.reportMessage('Error updating product: ' + product.query + ', error: ' + error, 'error', undefined,
+                              properties.monitoring.rollbar.callback);
+    } else {
+        console.log('Successfully updated product: %s', product.query);
+    }
+};
+
 module.exports = function (app) {
     app.get('/:siteId/averagePrice/:query', calculateAveragePrice);
 };
@@ -97,6 +107,25 @@ module.exports.findOrCreate = function (req, res, next) {
     });
 };
 
+module.exports.update = function (req, res, next) {
+    console.log('Updating product %s', req.product.query);
+
+    var body = req.body
+        , product = req.product
+        , user = req.user;
+
+    product.filters = _.merge(product.filters, body.selectedFilters, 'id', ['values']);
+    product.markModified('filters');
+
+    if (product.subscribedUsers.indexOf(user._id) < 0) {
+        product.subscribedUsers.push(user._id);
+    }
+
+    product.save(afterUpdatingProduct);
+
+    next();
+};
+
 module.exports.runCronJobToCheckForNewPublishments = function () {
     var cronJob = require('cron').CronJob;
 
@@ -122,31 +151,4 @@ module.exports.runCronJobToCheckForNewPublishments = function () {
 //                    onTick: job,
 //                    start: true//  Starts the job right now
 //                });
-};
-
-function afterUpdatingProduct(error, product) {
-    if (error) {
-        console.log('An error ocurred while updating the product: %s', product.query);
-    } else {
-        console.log('Successfully updated product: %s', product.query);
-    }
-}
-
-module.exports.update = function (req, res, next) {
-    console.log('Updating product %s', req.product.query);
-
-    var body = req.body
-        , product = req.product
-        , user = req.user;
-
-    product.filters = _.merge(product.filters, body.selectedFilters, 'id', ['values']);
-    product.markModified('filters');
-
-    if (product.subscribedUsers.indexOf(user._id) < 0) {
-        product.subscribedUsers.push(user._id);
-    }
-
-    product.save(afterUpdatingProduct);
-
-    next();
 };
