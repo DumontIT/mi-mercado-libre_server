@@ -1,16 +1,14 @@
-/**
- * Module dependencies.
- */
-var express = require('express');
-//var routes = require('./routes');
-var http = require('http');
-var path = require('path');
-
-//  Load Mongoose and each schema definition
-var mongoose = require('mongoose');
-
 //  Load own modules
 var properties = require('./properties');
+
+//=============================================================================
+//                      Module dependencies
+//=============================================================================
+var express = require('express')
+    , rollbar = require("rollbar")
+    , http = require('http')
+    , path = require('path')
+    , mongoose = require('mongoose');
 
 //  Set-Up ExpressJS server.
 var app = express();
@@ -29,7 +27,13 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Use the Rollbar error handler to send exceptions to your rollbar account. Make sure this is below the app.router.
+app.use(rollbar.errorHandler(properties.monitoring.rollbar.accessToken, properties.monitoring.rollbar.configuration));
+
 //  Development only
+
+console.log('Environment: ' + app.get('env'));
+
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }

@@ -2,6 +2,7 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 20/05/14, at 22:47.
  */
+var environment = 'production';
 var port = 5000;
 var ml = {
     appId: 5646442879385929,
@@ -18,4 +19,13 @@ exports.db = {
 exports.auth = {
     user: 'test',
     pass: 'test'
+};
+
+exports.monitoring = {
+    rollbar: {
+        accessToken: '1931a61e5e544b9a9e96b5aec04f25e2',
+        configuration: {
+            environment: environment
+        }
+    }
 };
