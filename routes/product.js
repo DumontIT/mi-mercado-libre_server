@@ -136,10 +136,15 @@ module.exports.update = function (req, res, next) {
     console.log('Updating product %s', req.product.query);
 
     var body = req.body
-        , product = req.product;
+        , product = req.product
+        , user = req.user;
 
     product.filters = _.merge(product.filters, body.selectedFilters, 'id', ['values']);
     product.markModified('filters');
+
+    if (product.subscribedUsers.indexOf(user._id) < 0) {
+        product.subscribedUsers.push(user._id);
+    }
 
     product.save(afterUpdatingProduct);
 
