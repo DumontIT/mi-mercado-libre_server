@@ -4,6 +4,7 @@
  */
 require('../model/product');
 var properties = require('../properties')
+    , rollbar = require('rollbar')
     , meli = require('mercadolibre')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey)
     , mongoose = require('mongoose')
@@ -11,9 +12,6 @@ var properties = require('../properties')
 
 
 var calculateAveragePrice = function (req, res) {
-
-    var a = prueba.hola;
-
     console.log('Calculating average price in site: ' + req.params.siteId + ' for query: ' + req.params.query);
 
     meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
@@ -25,6 +23,7 @@ var calculateAveragePrice = function (req, res) {
             if (error.code = 'ECONNRESET') {
                 statusCode = 504;
             }
+            rollbar.reportMessage('Error calling ML API: ' + error, 'critical', req, properties.monitoring.rollbar.callback);
 
             res.send(statusCode, {
                 message: error.message,

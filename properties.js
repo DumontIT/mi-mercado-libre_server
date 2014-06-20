@@ -26,6 +26,13 @@ exports.monitoring = {
         accessToken: '1931a61e5e544b9a9e96b5aec04f25e2',
         configuration: {
             environment: environment
+        },
+        callback: function (rollbarError) {
+            if (rollbarError) {
+                console.log("Problem sending message to rollbar: " + rollbarError);
+            } else {
+                console.log("Recorded message to rollbar");
+            }
         }
     }
 };
