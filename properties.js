@@ -2,7 +2,7 @@
  * Created by Nahuel Barrios <barrios.nahuel@gmail.com>.
  * Created on 20/05/14, at 22:47.
  */
-var environment = 'production';
+var environment = 'development';
 var port = 5000;
 var ml = {
     appId: 5646442879385929,
