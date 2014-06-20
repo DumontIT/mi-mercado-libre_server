@@ -5,16 +5,16 @@
 var _ = require('underscore');
 
 /**
- * Merges two object-like arrays based on a key property and also merging its array like attributes specified in arraysToMergeProperties.
+ * Merges two object-like arrays based on a key property and also merges its array-like attributes specified in objectPropertiesToMerge.
  * It also removes falsy values after merging object properties.
  *
  * @param firstArray The original object-like array.
  * @param secondArray An object-like array to add to the firstArray.
  * @param keyProperty The object property that will be used to check if objects from different arrays are the same or not.
- * @param arraysToMergeProperties The list of object properties that you want to merge. It all must be arrays.
+ * @param objectPropertiesToMerge The list of object properties that you want to merge. It all must be arrays.
  * @returns The updated original array.
  */
-function merge(firstArray, secondArray, keyProperty, arraysToMergeProperties) {
+function merge(firstArray, secondArray, keyProperty, objectPropertiesToMerge) {
 
     function mergeObjectProperties(object, otherObject, objectPropertiesToMerge) {
         _.each(objectPropertiesToMerge, function (eachProperty) {
@@ -33,7 +33,7 @@ function merge(firstArray, secondArray, keyProperty, arraysToMergeProperties) {
             });
 
             if (itemFromFirst) {
-                mergeObjectProperties(itemFromFirst, itemFromSecond, arraysToMergeProperties);
+                mergeObjectProperties(itemFromFirst, itemFromSecond, objectPropertiesToMerge);
             } else {
                 firstArray.push(itemFromSecond);
             }
