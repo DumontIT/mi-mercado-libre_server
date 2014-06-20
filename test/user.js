@@ -26,7 +26,27 @@ describe('POST /users/:id/subscriptions', function () {
         request.post({
                          uri: properties.uri + '/users/' + id + '/subscriptions',
                          body: {
-                             query: 'ipod nano'
+                             query: 'ipod nano',
+                             "selectedFilters": [
+                                 {
+                                     "id": "9997262-AMLA_7262_1",
+                                     "values": [
+                                         "9997262-AMLA_7262_1-MMLA6838"
+                                         , "9997262-AMLA_7262_1-MMLA244"
+                                     ]
+                                 },
+                                 {
+                                     "id": "9997262-AMLA_7262_2",
+                                     "values": [
+                                         "9997262-AMLA_7262_2-MMLA10627"
+                                         , "9997262-AMLA_7262_2-MMLA259"
+                                         , "9997262-AMLA_7262_2-MMLA13556"
+                                     ]
+                                 }
+                             ],
+                             "selectedSubscriptions": [
+                                 1, 3
+                             ]
                          }
                      }, function (error, response) {
 

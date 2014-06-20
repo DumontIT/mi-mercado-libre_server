@@ -144,11 +144,35 @@ function updateQueriesAndFilters(req, res, next) {
     next();
 }
 
+function isRequestValid(req, res, next) {
+    var errors = []
+        , body = req.body;
+
+    if (!body.query) {
+        errors.push('Body must contain "query" attribute.');
+    }
+
+    if (!body.selectedFilters) {
+        errors.push('Body must contain "selectedFilters" attribute.');
+    }
+
+    if (!body.selectedSubscriptions) {
+        errors.push('Body must contain "selectedSubscriptions" attribute.');
+    }
+
+    if (errors.length > 0) {
+        res.send(400, {errors: errors});
+    } else {
+        next();
+    }
+}
+
 function sendDummyResponse(req, res) {
     res.send(200);
 }
 
 module.exports = function (app) {
     app.get('/users', findAll);
-    app.post('/users/:id/subscriptions', auth.basicAuth, findOrCreateUser, updateQueriesAndFilters, addSubscriptions, sendDummyResponse);
+    app.post('/users/:id/subscriptions', auth.basicAuth, isRequestValid, findOrCreateUser, updateQueriesAndFilters, addSubscriptions,
+             sendDummyResponse);
 };

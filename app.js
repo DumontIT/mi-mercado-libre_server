@@ -95,8 +95,7 @@ app.configure('development', function () {
             }
         };
 
-        clear(err, users);
-//        clear(err, users, populate);
+        clear(err, users, populate);
     });
 });
 
