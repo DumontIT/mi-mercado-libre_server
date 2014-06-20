@@ -4,6 +4,7 @@
  */
 require('../model/product');
 var properties = require('../properties')
+    , errorsHandler = require('../utilities/errorsHandler')
     , rollbar = require('rollbar')
     , moment = require('moment')
     , _ = require('underscore')
@@ -12,11 +13,46 @@ var properties = require('../properties')
     , mongoose = require('mongoose')
     , Product = mongoose.model('Product');
 
+/**
+ * TODO : Documentation for findArticles
+ * @param siteId
+ * @param query
+ * @param all
+ * @param filterId
+ * @param map
+ * @param callback
+ */
+function findArticles(siteId, query, all, filterId, map, callback) {
+    var url = '/sites/' + siteId + '/search'
+        , queryStringParameters = {
+            q: query,
+            limit: 200
+        };
+
+    if (filterId) {
+        queryStringParameters.filterId = filterId;
+    }
+
+    if (all) {
+        queryStringParameters.offset = 0;
+        var totalArticles
+            , maxRequests;
+
+        meliObject.get(url, queryStringParameters, function (error, response) {
+            if (!errorsHandler.handleMeliResponse(error, response, 'Finding articles', 'critical')) {
+                totalArticles = response.paging.total;
+                maxRequests = totalArticles / response.paging.limit;
+            }
+        });
+    } else {
+        meliObject.get(url, queryStringParameters, callback);
+    }
+}
 
 var calculateAveragePrice = function (req, res) {
     console.log('Calculating average price in site: ' + req.params.siteId + ' for query: ' + req.params.query);
 
-    meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
+    findArticles(req.params.siteId, req.params.query, false, undefined, undefined, function (error, data) {
 
         if (error || !data.results) {
             console.log('An error ocurred while calling Mercado Libre API: ' + error);
@@ -58,17 +94,11 @@ var calculateAveragePrice = function (req, res) {
                 availableFilters: data.available_filters
             });
         }
-
     });
-
 };
 
 var afterUpdatingProduct = function (error, product) {
-    if (error) {
-        console.log('An error ocurred while updating the product: %s', product.query);
-        rollbar.reportMessage('Error updating product: ' + product.query + ', error: ' + error, 'error', undefined,
-                              properties.monitoring.rollbar.callback);
-    } else {
+    if (!errorsHandler.handle(error, 'Finding product')) {
         console.log('Successfully updated product: %s', product.query);
     }
 };
@@ -133,15 +163,45 @@ module.exports.runCronJobToCheckForNewPublishments = function () {
         var startTime = moment();
         console.log('Starting cron job at: %s', startTime);
 
-        console.log('This message will be printed every 30 seconds...');
+        var finish = function () {
+            var endTime = moment()
+                , milliseconds = endTime.subtract(startTime).milliseconds()
+                , duration = moment.duration(milliseconds).humanize();
+            console.log('Finishing cron job at: %s. It has taken: %s milliseconds (%s)', endTime, milliseconds, duration);
 
-        var endTime = moment()
-            , milliseconds = endTime.subtract(startTime).milliseconds()
-            , duration = moment.duration(milliseconds).humanize();
-        console.log('Finishing cron job at: %s. It has taken: %s milliseconds (%s)', endTime, milliseconds, duration);
-
-        //  TODO : Uncomment cron job duration rollbar report
+            //  TODO : Uncomment cron job duration rollbar report
 //        rollbar.reportMessage('Cron job has taken ' + duration, 'info', undefined, properties.monitoring.rollbar.callback)
+        };
+
+        console.log('Searching products...');
+        Product.find(function (error, products) {
+            if (!errorsHandler.handle(error, 'Finding products')) {
+                console.log('Products found: %s', products.length);
+
+
+                //  finishCronJob is run once, after calling it product.length times
+                var finishCronJob = _.after(products.length, finish);
+                _.each(products, function (aProduct) {
+
+                    var publications = [];
+                    _.each(aProduct.filters, function (filterId) {
+
+                        //  TODO : Unhard-code the site when looking for new articles!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        findArticles('MLA', aProduct.query, true, filterId, function (article) {
+                            return {
+                                id: article.id,
+                                price: article.price
+                            }
+                        }, function (data) {
+                            publications.concat(data.results);
+                        });
+
+                    });
+
+                    finishCronJob();
+                });
+            }
+        });
     };
 
     //  TODO : Unhard-code cron job execution
