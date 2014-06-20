@@ -11,6 +11,9 @@ var properties = require('../properties')
 
 
 var calculateAveragePrice = function (req, res) {
+
+    var a = prueba.hola;
+
     console.log('Calculating average price in site: ' + req.params.siteId + ' for query: ' + req.params.query);
 
     meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query}, function (error, data) {
