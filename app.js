@@ -76,16 +76,27 @@ app.configure('development', function () {
             });
         };
 
-        if (err) {
-            console.log('An error occurred while finding users, populating DB...');
-        } else {
-            if (users.length > 0) {
-                for (var i = 0; i < users.length; i++) {
-                    users[i].remove();
+        var clear = function (err, users, next) {
+            if (err) {
+                console.log('An error occurred while finding users, populating DB...');
+            } else {
+                if (users && users.length > 0) {
+                    for (var i = 0; i < users.length; i++) {
+                        users[i].remove();
+                    }
+                    console.log('Users collection cleared.');
+                } else {
+                    console.log('Can\'t clear users collection or it is empty.');
                 }
             }
-        }
-        populate();
+
+            if (next) {
+                next();
+            }
+        };
+
+        clear(err, users);
+//        clear(err, users, populate);
     });
 });
 
