@@ -5,6 +5,8 @@
 require('../model/product');
 var properties = require('../properties')
     , rollbar = require('rollbar')
+    , moment = require('moment')
+    , rollbar = require('rollbar')
     , meli = require('mercadolibre')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey)
     , mongoose = require('mongoose')
@@ -95,12 +97,25 @@ module.exports.runCronJobToCheckForNewPublishments = function () {
     var cronJob = require('cron').CronJob;
 
     var job = function () {
+        var startTime = moment();
+        console.log('Starting cron job at: %s', startTime);
+
         console.log('This message will be printed every 30 seconds...');
+
+        var endTime = moment()
+            , milliseconds = endTime.subtract(startTime).milliseconds()
+            , duration = moment.duration(milliseconds).humanize();
+        console.log('Finishing cron job at: %s. It has taken: %s milliseconds (%s)', endTime, milliseconds, duration);
+
+        //  TODO : Uncomment cron job duration rollbar report
+//        rollbar.reportMessage('Cron job has taken ' + duration, 'info', undefined, properties.monitoring.rollbar.callback)
     };
 
-    new cronJob({
-                    cronTime: '*/30 * * * * *',
-                    onTick: job,
-                    start: true//  Starts the job right now
-                });
+    //  TODO : Unhard-code cron job execution
+    job();
+//    new cronJob({
+//                    cronTime: '*/30 * * * * *',
+//                    onTick: job,
+//                    start: true//  Starts the job right now
+//                });
 };
