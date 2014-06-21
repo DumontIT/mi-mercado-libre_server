@@ -7,7 +7,9 @@ var properties = require('../properties')
     , errorsHandler = require('../utilities/errorsHandler')
     , rollbar = require('rollbar')
     , moment = require('moment')
+    , async = require('async')
     , _ = require('underscore')
+    , util = require('util')
     , meli = require('mercadolibre')
     , meliObject = new meli.Meli(properties.ml.appId, properties.ml.secretKey)
     , mongoose = require('mongoose')
@@ -18,30 +20,68 @@ var properties = require('../properties')
  * @param siteId
  * @param query
  * @param all
- * @param filterId
+ * @param filters
  * @param map
  * @param callback
  */
-function findArticles(siteId, query, all, filterId, map, callback) {
+function findArticles(siteId, query, all, filters, map, callback) {
     var url = '/sites/' + siteId + '/search'
         , queryStringParameters = {
             q: query,
             limit: 200
         };
 
-    if (filterId) {
-        queryStringParameters.filterId = filterId;
+    if (filters) {
+        _.each(filters, function (eachFilter) {
+            queryStringParameters[eachFilter.id] = eachFilter.value;
+        });
     }
 
     if (all) {
         queryStringParameters.offset = 0;
-        var totalArticles
-            , maxRequests;
+        var articles = [];
+
+        var findAll = function (pages) {
+            console.log('Finding all other pages for product: %s', query);
+
+            /**
+             * @param offset
+             * @param callback This is the callback function that must be called with "error, result". Every result will be passed to the "afterAll" function.
+             */
+            var doForEachPage = function (offset, callback) {
+                queryStringParameters.offset = offset;
+                meliObject.get(url, queryStringParameters, function (error, response) {
+                    if (!errorsHandler.handleMeliResponse(error, response, util.format('Finding remaining pages for product: %s', query), 'error')) {
+                        callback(undefined, response.results.map(map));
+                    } else {
+                        callback(error || response, undefined);
+                    }
+                });
+            };
+
+            var functions = []
+                , afterAll = function (error, results) {
+                    for (var i = 0; i < results.length; i++) {
+                        articles = _.merge(articles, results, 'id');
+                    }
+
+                    console.log('Total articles: %d', articles.length);
+                    callback(error, articles);
+                };
+
+            for (var pageNumber = 1; pageNumber <= pages; pageNumber++) {
+                console.log('Adding function for page: %d', pageNumber);
+                functions.push(doForEachPage.bind(undefined, pageNumber));
+            }
+
+            async.parallel(functions, afterAll);
+        };
 
         meliObject.get(url, queryStringParameters, function (error, response) {
             if (!errorsHandler.handleMeliResponse(error, response, 'Finding articles', 'critical')) {
-                totalArticles = response.paging.total;
-                maxRequests = totalArticles / response.paging.limit;
+                articles = response.results.map(map);
+
+                findAll(Math.ceil(response.paging.total / response.paging.limit));
             }
         });
     } else {
@@ -182,23 +222,35 @@ module.exports.runCronJobToCheckForNewPublishments = function () {
                 //  finishCronJob is run once, after calling it product.length times
                 var finishCronJob = _.after(products.length, finish);
                 _.each(products, function (aProduct) {
+                    var items = [];
 
-                    var publications = [];
-                    _.each(aProduct.filters, function (filterId) {
+                    var totalRequests = 0;
+                    _.each(aProduct.filters, function (eachFilter) {
+                        totalRequests += eachFilter.values.length;
+                    });
+                    var doAfterAllProductRequests = _.after(totalRequests, function (publications) {
+                        console.log('Finishing with current product, items: ' + publications.length);
 
-                        //  TODO : Unhard-code the site when looking for new articles!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        findArticles('MLA', aProduct.query, true, filterId, function (article) {
-                            return {
-                                id: article.id,
-                                price: article.price
-                            }
-                        }, function (data) {
-                            publications.concat(data.results);
-                        });
-
+                        finishCronJob();
                     });
 
-                    finishCronJob();
+                    _.each(aProduct.filters, function (aFilter) {
+                        _.each(aFilter.values, function (eachValue) {
+
+                            //  TODO : Unhard-code the site when looking for new articles!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            findArticles('MLA', aProduct.query, true, [
+                                {id: aFilter.id, value: eachValue}
+                            ], function (article) {
+                                return {
+                                    id: article.id,
+                                    price: article.price
+                                }
+                            }, function (error, newItems) {
+                                items = _.merge(items, newItems, 'id');
+                                doAfterAllProductRequests(items);
+                            });
+                        });
+                    });
                 });
             }
         });
