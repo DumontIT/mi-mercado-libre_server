@@ -33,7 +33,9 @@ function merge(firstArray, secondArray, keyProperty, objectPropertiesToMerge) {
             });
 
             if (itemFromFirst) {
-                mergeObjectProperties(itemFromFirst, itemFromSecond, objectPropertiesToMerge);
+                if (objectPropertiesToMerge) {
+                    mergeObjectProperties(itemFromFirst, itemFromSecond, objectPropertiesToMerge);
+                }
             } else {
                 firstArray.push(itemFromSecond);
             }
