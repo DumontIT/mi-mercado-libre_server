@@ -35,13 +35,17 @@ var handleMeliResponse = function (error, response, customMessage, level) {
     var libraryError = handleGenericError(error, customMessage, level)
         , callError;
 
-    if (response.status) {
-        callError = response.message;
+    if (response) {
+        if (response.status) {
+            callError = response.message;
 
-        console.log('An error occurred while %s: (%s) %s', customMessage, response.status, callError);
+            console.log('An error occurred while %s: (%s) %s', customMessage, response.status, callError);
 
-        var message = util.format('%s, error: %s', customMessage, callError);
-        rollbar.reportMessage(message, level || 'error', undefined, properties.monitoring.rollbar.callback);
+            var message = util.format('%s, error: %s', customMessage, callError);
+            rollbar.reportMessage(message, level || 'error', undefined, properties.monitoring.rollbar.callback);
+        }
+    } else {
+        callError = util.format('%s, response is undefined. Must be a library error!', customMessage);
     }
 
     return libraryError || callError;
