@@ -48,7 +48,7 @@ var calculateAveragePrice = function (req, res) {
             }
 
             res.send(200, {
-                averagePrice: Math.round(total / data.paging.limit),
+                averagePrice: Math.round(total / data.results.length),
                 minimumPrice: Math.round(minimum),
                 maximumPrice: Math.round(maximum),
                 currencyId: data.results[0].currency_id,
