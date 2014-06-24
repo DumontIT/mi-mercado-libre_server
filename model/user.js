@@ -23,6 +23,19 @@ userSchema.methods.sayHello = function () {
     console.log(greeting);
 };
 
+userSchema.methods.knowsItem = function (query, anItem) {
+    var knows;
+
+    if (query.latestItems) {
+        knows = query.latestItems.some(function (eachItem) {
+            return eachItem.id === anItem.id;
+        });
+    }
+
+    return knows;
+};
+
+
 //  Finally compiles this schema definition.
 mongoose.model(SCHEMA_NAME, userSchema);
 console.log('Schema compiled: ' + SCHEMA_NAME);
