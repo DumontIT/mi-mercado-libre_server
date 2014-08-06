@@ -231,6 +231,14 @@ module.exports.runCronJobToCheckForNewPublishments = function () {
                     var doAfterAllProductRequests = _.after(totalRequests, function (publications) {
                         console.log('Finishing with current product, items: ' + publications.length);
 
+                        //  TODO : SHOULD TEST THIS AND COMMIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        aProduct.items = publications;
+
+                        console.log('Sending user updates for product: %s', aProduct.query);
+                        _.each(aProduct.subscribedUsers, function (userId) {
+                            user.sendUpdates(userId, aProduct);
+                        });
+
                         finishCronJob();
                     });
 

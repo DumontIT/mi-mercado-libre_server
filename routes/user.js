@@ -186,3 +186,23 @@ module.exports = function (app) {
     app.post('/users/:id/subscriptions', auth.basicAuth, isRequestValid, findOrCreateUser, updateUserQueriesAndFilters, addSubscriptions,
              updateProductQueriesAndFilters, sendDummyResponse);
 };
+
+module.exports.sendUpdates = function (userId, product) {
+    console.log('Analyzing items for product: %s, to send updates if needed to user (model._id): %s', product.query, userId);
+
+    User.findById(userId, function (error, user) {
+        if (!errorsHandler.handle(error, 'Finding a user by model._id')) {
+            var userQuery = _.find(user.queries, function (eachQuery) {
+                return eachQuery.query === product.query;
+            });
+
+            _.each(product.items, function (eachItem) {
+
+
+                if (!user.knowsItem(userQuery, eachItem)) {
+                    console.log('Sending notification to user: %s, about item id: %s', user.id, eachItem.id);
+                }
+            });
+        }
+    });
+}
