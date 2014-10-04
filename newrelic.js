@@ -8,11 +8,11 @@ exports.config = {
     /**
      * Array of application names.
      */
-    app_name: ['desa-mi-mercado-libre'],
+    app_name: ['mi-mercado-libre'],
     /**
      * Your New Relic license key.
      */
-    license_key: 'f6a459a65e3c962454def4a0c4084e749cc4ecd2',
+    license_key: '2d26218af22f0662d2f185f5086af196055d26af',
     logging: {
         /**
          * Level at which to log. 'trace' is most useful to New Relic when diagnosing
