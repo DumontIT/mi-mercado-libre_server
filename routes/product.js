@@ -17,13 +17,14 @@ var calculateAveragePrice = function (req, res) {
     meliObject.get('/sites/' + req.params.siteId + '/search', {q: req.params.query, limit: 200}, function (error, data) {
 
         if (error || !data.results) {
-            console.log('An error ocurred while calling Mercado Libre API: ' + error);
+            var errorMessage = error ? error : 'Response body has no "results" attribute';
+            console.log('An error ocurred while calling Mercado Libre API: ' + errorMessage);
 
             var statusCode = 500;
-            if (error.code = 'ECONNRESET') {
+            if (error && error.code == 'ECONNRESET') {
                 statusCode = 504;
             }
-            rollbar.reportMessage('Error calling ML API: ' + error, 'critical', req, properties.monitoring.rollbar.callback);
+            rollbar.reportMessage('Error calling ML API: ' + errorMessage, 'critical', req, properties.monitoring.rollbar.callback);
 
             res.send(statusCode, {
                 message: error.message,
