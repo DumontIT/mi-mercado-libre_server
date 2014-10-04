@@ -34,7 +34,13 @@ var calculateAveragePrice = function (req, res) {
             var total = 0;
             var minimum;
             var maximum;
-            var responseBody = {};
+            var responseBody = {
+                averagePrice: 0,
+                minimumPrice: 0,
+                maximumPrice: 0,
+                filters: data.filters,
+                availableFilters: data.available_filters
+            };
 
             if (data.results.length > 0) {
                 for (var i = 0; i < data.results.length; i++) {
@@ -54,8 +60,6 @@ var calculateAveragePrice = function (req, res) {
                 responseBody.minimumPrice = Math.round(minimum);
                 responseBody.maximumPrice = Math.round(maximum);
                 responseBody.currencyId = data.results[0].currency_id;
-                responseBody.filters = data.filters;
-                responseBody.availableFilters = data.available_filters;
             }
 
             res.send(200, responseBody);
