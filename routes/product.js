@@ -34,28 +34,31 @@ var calculateAveragePrice = function (req, res) {
             var total = 0;
             var minimum;
             var maximum;
+            var responseBody = {};
 
-            for (var i = 0; i < data.results.length; i++) {
-                var eachArticle = data.results[i];
-                total += eachArticle.price;
+            if (data.results.length > 0) {
+                for (var i = 0; i < data.results.length; i++) {
+                    var eachArticle = data.results[i];
+                    total += eachArticle.price;
 
-                if (!minimum || eachArticle.price < minimum) {
-                    minimum = eachArticle.price;
+                    if (!minimum || eachArticle.price < minimum) {
+                        minimum = eachArticle.price;
+                    }
+
+                    if (!maximum || eachArticle.price > maximum) {
+                        maximum = eachArticle.price;
+                    }
                 }
 
-                if (!maximum || eachArticle.price > maximum) {
-                    maximum = eachArticle.price;
-                }
+                responseBody.averagePrice = Math.round(total / data.results.length);
+                responseBody.minimumPrice = Math.round(minimum);
+                responseBody.maximumPrice = Math.round(maximum);
+                responseBody.currencyId = data.results[0].currency_id;
+                responseBody.filters = data.filters;
+                responseBody.availableFilters = data.available_filters;
             }
 
-            res.send(200, {
-                averagePrice: Math.round(total / data.results.length),
-                minimumPrice: Math.round(minimum),
-                maximumPrice: Math.round(maximum),
-                currencyId: data.results[0].currency_id,
-                filters: data.filters,
-                availableFilters: data.available_filters
-            });
+            res.send(200, responseBody);
         }
 
     });
