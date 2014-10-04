@@ -1,6 +1,8 @@
 //=============================================================================
 //                      Module dependencies
 //=============================================================================
+require('newrelic');
+
 var express = require('express')
     , rollbar = require("rollbar")
     , http = require('http')
