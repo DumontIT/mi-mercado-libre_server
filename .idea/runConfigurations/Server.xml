@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Server" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="$USER_HOME$/local/bin/node" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="Server" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="$PROJECT_DIR$/../../xDKs/node-v0.12.2-linux-x64/bin/node" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
     <browser url="http://localhost:3000/" />
     <RunnerSettings RunnerId="NodeJS.debug" />
     <RunnerSettings RunnerId="NodeJS.run" />
